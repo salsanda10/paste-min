@@ -9,6 +9,9 @@
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f4f6f8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
@@ -81,27 +84,37 @@
     }
 
     main {
+      flex-grow: 1;
       max-width: 800px;
-      margin: 40px auto;
+      margin: 40px auto 20px;
       padding: 0 20px;
       background: white;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 300px; /* чтобы блок был заметно выше */
+      position: relative;
     }
 
     h1 {
-      text-align: center;
       color: #007acc;
-      padding-top: 20px;
+      margin: 0;
+      position: relative;
+      top: -5px; /* чуть подняли вверх */
+      text-align: center;
+      font-weight: 700;
     }
 
     .form-section {
       padding: 20px;
       display: none;
+      flex-direction: column;
     }
 
     .form-section.active {
-      display: block;
+      display: flex;
     }
 
     .form-group {
@@ -160,13 +173,19 @@
       border-radius: 0 0 6px 6px;
       background: #f9f9f9;
       min-height: 200px;
+      overflow-wrap: break-word;
     }
 
     .footer {
       text-align: center;
       font-size: 14px;
-      padding: 20px;
+      padding: 15px 20px;
       color: #777;
+      background: #f4f6f8;
+      border-top: 1px solid #ddd;
+      flex-shrink: 0;
+      user-select: none;
+      line-height: 1.5;
     }
 
     .editor-options {
@@ -179,7 +198,8 @@
       flex: 1;
     }
 
-    .publish-form button {
+    .publish-form button,
+    #publish-form button {
       background: #007acc;
       color: white;
       padding: 10px 20px;
@@ -201,7 +221,7 @@
 <body>
   <header>
     <div class="logo-area">
-      <img src="images/logo.png" alt="logo">
+      <img src="images/logo.png" alt="logo" />
       <div class="logo">paste-min</div>
     </div>
     <div class="auth-controls">
@@ -294,12 +314,14 @@
   <div class="footer">
     <p>Создано с использованием GitHub Pages и Firebase</p>
     <p>Проект paste-min для публикации текста</p>
-    <p>Разработка: Елена, 2025</p>
+    <p>Разработка с использованием GitHub Pages и Firebase, 2025</p>
   </div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <script>
     const firebaseConfig = {
@@ -323,12 +345,14 @@
       loginForm.classList.add('active');
       registerForm.classList.remove('active');
       publishForm.classList.remove('active');
+      welcomeScreen.style.display = 'none';
     };
 
     document.getElementById('show-register').onclick = () => {
       registerForm.classList.add('active');
       loginForm.classList.remove('active');
       publishForm.classList.remove('active');
+      welcomeScreen.style.display = 'none';
     };
 
     function register() {
@@ -403,7 +427,5 @@
       }
     }
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </body>
 </html>
