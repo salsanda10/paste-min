@@ -136,83 +136,96 @@
     </div>
 
     <div class="logout-section" id="welcome">
-      <h2>Вы вошли!</h2>
+  <h2>Вы вошли!</h2>
+  <form id="publish-form">
+    <div class="form-group">
+      <label for="title">Заголовок</label>
+      <input type="text" id="title" placeholder="Введите заголовок" />
     </div>
+    <div class="form-group">
+      <label for="content">Текст</label>
+      <textarea id="content" placeholder="Введите текст..." rows="6" style="width: 100%; padding: 10px; font-size: 16px; border-radius: 6px; border: 1px solid #ccc;"></textarea>
+    </div>
+    <button type="submit">Опубликовать</button>
+  </form>
+</div>
   </main>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBVRVBhAkr6hB5ayM_-ti6hXUbCkE5Xays",
-      authDomain: "paste-registr-min.firebaseapp.com",
-      projectId: "paste-registr-min",
-      storageBucket: "paste-registr-min.appspot.com",
-      messagingSenderId: "296115081813",
-      appId: "1:296115081813:web:6eeb16798fa5ff1eab3adc"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+  const firebaseConfig = {
+    apiKey: "AIzaSyBVRVBhAkr6hB5ayM_-ti6hXUbCkE5Xays",
+    authDomain: "paste-registr-min.firebaseapp.com",
+    projectId: "paste-registr-min",
+    storageBucket: "paste-registr-min.appspot.com",
+    messagingSenderId: "296115081813",
+    appId: "1:296115081813:web:6eeb16798fa5ff1eab3adc"
+  };
 
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const welcome = document.getElementById('welcome');
-    const btnLogin = document.getElementById('show-login');
-    const btnRegister = document.getElementById('show-register');
-    const btnLogout = document.getElementById('logout');
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    btnLogin.onclick = () => {
-      loginForm.classList.add('active');
-      registerForm.classList.remove('active');
-      welcome.style.display = 'none';
-    };
+  const loginForm = document.getElementById('login-form');
+  const registerForm = document.getElementById('register-form');
+  const welcome = document.getElementById('welcome');
+  const btnLogin = document.getElementById('show-login');
+  const btnRegister = document.getElementById('show-register');
+  const btnLogout = document.getElementById('logout');
 
-    btnRegister.onclick = () => {
-      registerForm.classList.add('active');
-      loginForm.classList.remove('active');
-      welcome.style.display = 'none';
-    };
+  btnLogin.onclick = () => {
+    loginForm.classList.add('active');
+    registerForm.classList.remove('active');
+    welcome.style.display = 'none';
+  };
 
-    btnLogout.onclick = () => {
-      auth.signOut();
-    };
+  btnRegister.onclick = () => {
+    registerForm.classList.add('active');
+    loginForm.classList.remove('active');
+    welcome.style.display = 'none';
+  };
 
-    function register() {
-      const email = document.getElementById('register-email').value;
-      const password = document.getElementById('register-password').value;
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(() => alert("Регистрация прошла успешно"))
-        .catch(err => alert(err.message));
-    }
+  btnLogout.onclick = () => {
+    auth.signOut();
+  };
 
-    function login() {
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          loginForm.classList.remove('active');
-          registerForm.classList.remove('active');
-          welcome.style.display = 'block';
-        })
-        .catch(err => alert(err.message));
-    }
+  function register() {
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(() => alert("Регистрация прошла успешно"))
+      .catch(err => alert(err.message));
+  }
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        btnLogin.style.display = 'none';
-        btnRegister.style.display = 'none';
-        btnLogout.style.display = 'inline-block';
-        welcome.style.display = 'block';
+  function login() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => {
         loginForm.classList.remove('active');
         registerForm.classList.remove('active');
-      } else {
-        btnLogin.style.display = 'inline-block';
-        btnRegister.style.display = 'inline-block';
-        btnLogout.style.display = 'none';
-        welcome.style.display = 'none';
-      }
-    });
-  </script>
+        welcome.style.display = 'block';
+      })
+      .catch(err => alert(err.message));
+  }
+
+  // ✅ Правильный onAuthStateChanged
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      btnLogin.style.display = 'none';
+      btnRegister.style.display = 'none';
+      btnLogout.style.display = 'inline-block';
+      welcome.style.display = 'block';
+      loginForm.classList.remove('active');
+      registerForm.classList.remove('active');
+    } else {
+      btnLogin.style.display = 'inline-block';
+      btnRegister.style.display = 'inline-block';
+      btnLogout.style.display = 'none';
+      welcome.style.display = 'none';
+    }
+  });
+</script>
 </body>
 </html>
