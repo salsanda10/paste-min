@@ -1,212 +1,605 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>paste-min</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-    }
-    header {
-      background: #007acc;
-      color: white;
-      padding: 12px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .logo {
-      font-size: 22px;
-      font-weight: bold;
-    }
-    .auth-controls button {
-      margin-left: 10px;
-      padding: 8px 14px;
-      background: white;
-      color: #007acc;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    main {
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 0 20px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-    h1 {
-      text-align: center;
-      color: #007acc;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>paste-min</title>
+<style>
+  /* Сброс и базовые стили */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; padding: 0;
+    font-family: Arial, sans-serif;
+    background: #fafafa;
+    color: #222;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  a {
+    color: #007acc;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
 
-    .form-section {
-      padding: 20px;
-      display: none;
+  /* Хедер */
+  header {
+    background: #007acc;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: bold;
+    font-size: 24px;
+  }
+  .logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+  nav button {
+    background: white;
+    color: #007acc;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  nav button:hover {
+    background: #cce6ff;
+  }
+
+  /* Аккаунт справа */
+  .account {
+    position: relative;
+    user-select: none;
+  }
+  .account-name {
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #005fa3;
+    color: white;
+    font-weight: 600;
+  }
+  .account-name:hover {
+    background: #004580;
+  }
+  .account-dropdown {
+    position: absolute;
+    right: 0;
+    top: 38px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 220px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+  }
+  .account-dropdown.active {
+    display: flex;
+  }
+  .account-dropdown a, .account-dropdown button {
+    padding: 10px 15px;
+    border: none;
+    background: none;
+    text-align: left;
+    width: 100%;
+    font-size: 15px;
+    color: #007acc;
+    cursor: pointer;
+  }
+  .account-dropdown a:hover, .account-dropdown button:hover {
+    background: #f0f8ff;
+  }
+  .account-dropdown button {
+    font-weight: 600;
+  }
+
+  /* Контент */
+  main {
+    flex-grow: 1;
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 0 15px;
+  }
+
+  /* Блок с формой */
+  .hidden {
+    display: none;
+  }
+  .form-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    color: #007acc;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    max-width: 100%;
+  }
+
+  /* Верхние поля заголовок, язык, срок */
+  .top-form-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 180px;
+  }
+  label {
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  input[type="text"], select {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline-offset: 2px;
+    outline-color: transparent;
+    transition: outline-color 0.2s ease;
+  }
+  input[type="text"]:focus, select:focus {
+    outline-color: #007acc;
+  }
+
+  /* Поле Язык с полной рамкой и стрелкой справа */
+  #language-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: white;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.41 0L6 4.58 10.59 0 12 1.41 6 7.41 0 1.41z' fill='%23007acc'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px 8px;
+    padding-right: 36px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  /* Поля Текст и Просмотр */
+  .text-preview-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .text-preview-row > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  textarea {
+    font-family: Consolas, monospace;
+    font-size: 15px;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    min-height: 250px;
+    background: #fff;
+  }
+  #preview {
+    background: #f9f9f9;
+    color: #444;
+    resize: none;
+    overflow-y: auto;
+    min-height: 250px;
+  }
+
+  /* Большое поле под ними */
+  .big-textarea {
+    margin-top: 20px;
+  }
+  .big-textarea textarea {
+    width: 100%;
+    min-width: 100%;
+    min-height: 500px;
+    max-height: 700px;
+    resize: vertical;
+    font-family: Consolas, monospace;
+    font-size: 15px;
+    padding: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    overflow-y: auto;
+  }
+
+  /* Кнопка Создать под большим полем, слева */
+  .form-button {
+    margin-top: 0px;
+    text-align: left;
+  }
+  .form-button button {
+    padding: 12px 25px;
+    font-size: 18px;
+    background: #007acc;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .form-button button:hover {
+    background: #005fa3;
+  }
+
+  /* Текст в три колонки внизу */
+  .info-text {
+    margin-top: 40px;
+    display: flex;
+    gap: 20px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .info-text div {
+    flex: 1;
+    background: #e8f0fe;
+    padding: 18px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #004080;
+  }
+
+  /* Адаптив */
+  @media (max-width: 850px) {
+    .text-preview-row {
+      flex-direction: column;
     }
-    .form-section.active {
-      display: block;
+    .info-text {
+      flex-direction: column;
     }
-    .form-group {
-      margin-bottom: 14px;
+    .top-form-row {
+      flex-direction: column;
     }
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .form-section button {
-      padding: 10px 20px;
-      background: #007acc;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .logout-section {
-      text-align: center;
-      padding: 20px;
-      display: none;
-    }
-  </style>
+  }
+
+  /* Модальное окно */
+  .modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+  }
+  .modal.hidden {
+    display: none;
+  }
+  .modal-content {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 10px;
+    max-width: 350px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #007acc;
+  }
+  .modal-content label {
+    margin-top: 6px;
+    margin-bottom: 4px;
+    font-weight: 600;
+    display: block;
+  }
+  .modal-content input {
+    margin-top: 6px;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  .modal-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .modal-buttons button {
+    padding: 10px 20px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: #007acc;
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+  .modal-buttons button:hover {
+    background: #005fa3;
+  }
+  .modal-buttons button#login-cancel {
+    background: #ccc;
+    color: #333;
+  }
+  .modal-buttons button#login-cancel:hover {
+    background: #aaa;
+  }
+
+  /* Стили для ссылки "Забыли пароль?" */
+  #forgot-password {
+    font-size: 14px;
+    line-height: 1;
+    margin-top: 4px;
+    display: inline-block;
+    cursor: pointer;
+    color: #007acc;
+  }
+  #forgot-password:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
 </head>
 <body>
-  <header>
-    <div class="logo">paste-min</div>
-    <div class="auth-controls">
-      <button id="show-login">Вход</button>
-      <button id="show-register">Регистрация</button>
-      <button id="logout" style="display: none;">Выйти</button>
+
+<header>
+  <div class="logo-title">
+    <img src="images/spellbook.png" alt="Логотип" class="logo" />
+    <div>paste-min</div>
+  </div>
+  <nav>
+    <button id="btn-create">Создать</button>
+  </nav>
+  <div class="account" id="account">
+    <div class="account-name" id="account-name">Войти</div>
+    <div class="account-dropdown" id="account-dropdown">
+      <a href="#" id="account-settings">Настройки</a>
+      <a href="#" id="account-language">Выбор языка</a>
+      <a href="#" id="account-password">Сменить пароль</a>
+      <a href="#" id="account-publishes">Мои публикации</a>
+      <button id="logout-btn" style="display:none;">Выйти</button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main>
-    <h1>Добро пожаловать!</h1>
+<main>
+  <!-- Главная страница -->
+  <section id="main-page">
+    <h2>Добро пожаловать!</h2>
+    <p>На этом сайте вы можете создавать публикации и делиться ими.</p>
+    <p>Все публикации сохраняются и доступны вам.</p>
+  </section>
 
-    <div class="form-section" id="login-form">
-      <h2>Вход</h2>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="login-email" />
+  <!-- Форма создания -->
+  <section id="form-section" class="hidden">
+    <h2 class="form-title">Создать</h2>
+    <form id="paste-form">
+      <div class="top-form-row">
+        <div class="form-group" style="flex: 3;">
+          <label for="title-input">Заголовок</label>
+          <input type="text" id="title-input" name="title" placeholder="Введите заголовок" required />
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label for="language-select">Язык разметки</label>
+          <select id="language-select" name="language" required>
+            <option value="plaintext">Plain Text</option>
+            <option value="markdown">Markdown</option>
+            <option value="yaml">YAML</option>
+            <option value="json">JSON</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label for="expiry">Срок действия</label>
+          <select id="expiry" name="expiry">
+            <option value="1_week">1 неделя</option>
+            <option value="1_month">1 месяц</option>
+            <option value="1_year">1 год</option>
+            <option value="never">Никогда</option>
+          </select>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Пароль</label>
-        <input type="password" id="login-password" />
+
+      <div class="text-preview-row">
+        <div>
+          <label for="content-input">Текст</label>
+          <textarea id="content-input" name="content" placeholder="Введите текст" oninput="updatePreview()" required></textarea>
+        </div>
+        <div>
+          <label for="preview">Просмотр</label>
+          <textarea id="preview" readonly></textarea>
+        </div>
       </div>
-      <button onclick="login()">Войти</button>
-    </div>
 
-    <div class="form-section" id="register-form">
-      <h2>Регистрация</h2>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="register-email" />
+      <div class="form-button">
+        <button type="submit">Создать</button>
       </div>
-      <div class="form-group">
-        <label>Пароль</label>
-        <input type="password" id="register-password" />
+    </form>
+  </section>
+
+  <!-- Текст в 3 колонки -->
+  <section class="info-text">
+    <div>Создавайте публикации легко и быстро.</div>
+    <div>Делитесь ссылками на ваши публикации с друзьями.</div>
+    <div>Все данные сохраняются для вашего удобства.</div>
+  </section>
+</main>
+
+<!-- Модальное окно входа -->
+<div id="login-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Вход в аккаунт</h3>
+    <form id="login-form">
+      <label for="email-input">Email</label>
+      <input type="email" id="email-input" required placeholder="Введите email" />
+
+      <label for="password-input" style="margin-top: 10px;">Пароль</label>
+      <input type="password" id="password-input" required placeholder="Введите пароль" />
+
+      <a href="#" id="forgot-password">Забыли пароль?</a>
+
+      <div class="modal-buttons">
+        <button type="submit">Войти</button>
+        <button type="button" id="login-cancel">Отмена</button>
       </div>
-      <button onclick="register()">Зарегистрироваться</button>
-    </div>
+    </form>
+  </div>
+</div>
 
-    <div class="logout-section" id="welcome">
-      <h2>Вы вошли!</h2>
-    </div>
-  </main>
+<script>
+  // Конфигурация Firebase (вставь свою из консоли Firebase)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBVRVBhAkr6hB5ayM_-ti6hXUbCkE5Xays",
+    authDomain: "paste-registr-min.firebaseapp.com",
+    projectId: "paste-registr-min",
+    storageBucket: "paste-registr-min.firebasestorage.app",
+    messagingSenderId: "296115081813",
+    appId: "1:296115081813:web:6eeb16798fa5ff1eab3adc"
+  };
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  // Инициализация Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-  <script>
-    // ✅ ВСТАВЬ СЮДА СВОЙ КОД firebaseConfig из Firebase Console
-    const firebaseConfig = {
-      apiKey: "AIzaSyBVRVBhAkr6hB5ayM_-ti6hXUbCkE5Xays",
-      authDomain: "paste-registr-min.firebaseapp.com",
-      projectId: "paste-registr-min",
-      storageBucket: "paste-registr-min.appspot.com",
-      messagingSenderId: "296115081813",
-      appId: "1:296115081813:web:6eeb16798fa5ff1eab3adc"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+  // Элементы DOM
+  const accountName = document.getElementById('account-name');
+  const accountDropdown = document.getElementById('account-dropdown');
+  const logoutBtn = document.getElementById('logout-btn');
+  const loginModal = document.getElementById('login-modal');
+  const loginForm = document.getElementById('login-form');
+  const loginCancel = document.getElementById('login-cancel');
 
-    // UI переключатели
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const welcome = document.getElementById('welcome');
-    const btnLogin = document.getElementById('show-login');
-    const btnRegister = document.getElementById('show-register');
-    const btnLogout = document.getElementById('logout');
+  // Обновление UI аккаунта
+  function updateAccountUI(user) {
+    if (user) {
+      accountName.textContent = user.email;
+      logoutBtn.style.display = 'block';
+      accountDropdown.classList.remove('active');
+      loginModal.classList.add('hidden');
+    } else {
+      accountName.textContent = 'Войти';
+      logoutBtn.style.display = 'none';
+      accountDropdown.classList.remove('active');
+      loginModal.classList.add('hidden');
+    }
+  }
 
-    btnLogin.onclick = () => {
-      loginForm.classList.add('active');
-      registerForm.classList.remove('active');
-      welcome.style.display = 'none';
-    };
+  // Слушатель состояния аутентификации
+  auth.onAuthStateChanged(user => {
+    updateAccountUI(user);
+  });
 
-    btnRegister.onclick = () => {
-      registerForm.classList.add('active');
-      loginForm.classList.remove('active');
-      welcome.style.display = 'none';
-    };
+  // Клик по имени аккаунта
+  accountName.addEventListener('click', () => {
+    if (auth.currentUser) {
+      accountDropdown.classList.toggle('active');
+    } else {
+      loginModal.classList.remove('hidden');
+    }
+  });
 
-    btnLogout.onclick = () => {
-      auth.signOut();
-    };
+  // Кнопка выхода
+  logoutBtn.addEventListener('click', () => {
+    auth.signOut();
+  });
 
-    // Регистрация
-    function register() {
-      const email = document.getElementById('register-email').value;
-      const password = document.getElementById('register-password').value;
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(() => alert("Регистрация прошла успешно"))
-        .catch(err => alert(err.message));
+  // Отмена входа
+  loginCancel.addEventListener('click', () => {
+    loginModal.classList.add('hidden');
+  });
+
+  // Обработка формы входа (логин или регистрация)
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = loginForm['email-input'].value.trim();
+    const password = loginForm['password-input'].value.trim();
+
+    if (!email || !password) {
+      alert('Пожалуйста, заполните email и пароль');
+      return;
     }
 
-    // Вход
-    function login() {
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          loginForm.classList.remove('active');
-          registerForm.classList.remove('active');
-          welcome.style.display = 'block';
-        })
-        .catch(err => alert(err.message));
-    }
+    // Попытка входа
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => {
+        loginForm.reset();
+        loginModal.classList.add('hidden');
+      })
+      .catch(error => {
+        if (error.code === 'auth/user-not-found') {
+          // Если пользователя нет, регистрируем
+          auth.createUserWithEmailAndPassword(email, password)
+            .then(() => {
+              loginForm.reset();
+              loginModal.classList.add('hidden');
+              alert('Регистрация прошла успешно, вы вошли в систему');
+            })
+            .catch(err => alert('Ошибка регистрации: ' + err.message));
+        } else if (error.code === 'auth/wrong-password') {
+          alert('Неверный пароль');
+        } else {
+          alert('Ошибка входа: ' + error.message);
+        }
+      });
+  });
 
-    // Слежение за входом
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        btnLogin.style.display = 'none';
-        btnRegister.style.display = 'none';
-        btnLogout.style.display = 'inline-block';
-        welcome.style.display = 'block';
-        loginForm.classList.remove('active');
-        registerForm.classList.remove('active');
-      } else {
-        btnLogin.style.display = 'inline-block';
-        btnRegister.style.display = 'inline-block';
-        btnLogout.style.display = 'none';
-        welcome.style.display = 'none';
-      }
-    });
-  </script>
+  // Обработчик "Забыли пароль"
+  document.getElementById('forgot-password').addEventListener('click', (e) => {
+    e.preventDefault();
+    const email = prompt('Введите ваш email для восстановления пароля:');
+    if (email) {
+      auth.sendPasswordResetEmail(email)
+        .then(() => alert('Письмо для восстановления пароля отправлено на ' + email))
+        .catch(err => alert('Ошибка отправки письма: ' + err.message));
+    }
+  });
+
+  // Логика формы "Создать" — пока пусто
+  const btnCreate = document.getElementById('btn-create');
+  const mainPage = document.getElementById('main-page');
+  const formSection = document.getElementById('form-section');
+
+  btnCreate.addEventListener('click', () => {
+    if (!auth.currentUser) {
+      alert('Пожалуйста, войдите в аккаунт чтобы создавать публикации.');
+      loginModal.classList.remove('hidden');
+      return;
+    }
+    mainPage.classList.add('hidden');
+    formSection.classList.remove('hidden');
+  });
+
+  // Превью текста (пока простое копирование)
+  const contentInput = document.getElementById('content-input');
+  const preview = document.getElementById('preview');
+  function updatePreview() {
+    preview.value = contentInput.value;
+  }
+</script>
+
 </body>
 </html>
