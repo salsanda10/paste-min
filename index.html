@@ -120,162 +120,19 @@
     padding: 0 15px;
   }
 
-  /* Блок с формой */
-  .hidden {
-    display: none;
-  }
-  .form-title {
-    font-size: 28px;
-    margin-bottom: 20px;
+  /* Текст приветствия */
+  #main-page h2 {
     font-weight: 700;
     color: #007acc;
   }
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    max-width: 100%;
-  }
-
-  /* Верхние поля заголовок, язык, срок */
-  .top-form-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 180px;
-  }
-  label {
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  input[type="text"], select {
-    padding: 8px 12px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    outline-offset: 2px;
-    outline-color: transparent;
-    transition: outline-color 0.2s ease;
-  }
-  input[type="text"]:focus, select:focus {
-    outline-color: #007acc;
-  }
-
-  /* Поле Язык с полной рамкой и стрелкой справа */
-  #language-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-color: white;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.41 0L6 4.58 10.59 0 12 1.41 6 7.41 0 1.41z' fill='%23007acc'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 12px 8px;
-    padding-right: 36px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-  }
-
-  /* Поля Текст и Просмотр */
-  .text-preview-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .text-preview-row > div {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  textarea {
-    font-family: Consolas, monospace;
-    font-size: 15px;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    resize: vertical;
-    min-height: 250px;
-    background: #fff;
-  }
-  #preview {
-    background: #f9f9f9;
-    color: #444;
-    resize: none;
-    overflow-y: auto;
-    min-height: 250px;
-  }
-
-  /* Большое поле под ними */
-  .big-textarea {
-    margin-top: 20px;
-  }
-  .big-textarea textarea {
-    width: 100%;
-    min-width: 100%;
-    min-height: 500px;
-    max-height: 700px;
-    resize: vertical;
-    font-family: Consolas, monospace;
-    font-size: 15px;
-    padding: 14px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    overflow-y: auto;
-  }
-
-  /* Кнопка Создать под большим полем, слева */
-  .form-button {
-    margin-top: 0px;
-    text-align: left;
-  }
-  .form-button button {
-    padding: 12px 25px;
+  #main-page p {
     font-size: 18px;
-    background: #007acc;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .form-button button:hover {
-    background: #005fa3;
+    line-height: 1.5;
   }
 
-  /* Текст в три колонки внизу */
-  .info-text {
-    margin-top: 40px;
-    display: flex;
-    gap: 20px;
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .info-text div {
-    flex: 1;
-    background: #e8f0fe;
-    padding: 18px 20px;
-    border-radius: 8px;
-    font-size: 16px;
-    color: #004080;
-  }
-
-  /* Адаптив */
-  @media (max-width: 850px) {
-    .text-preview-row {
-      flex-direction: column;
-    }
-    .info-text {
-      flex-direction: column;
-    }
-    .top-form-row {
-      flex-direction: column;
-    }
+  /* Скрытые блоки */
+  .hidden {
+    display: none;
   }
 
   /* Модальное окно */
@@ -308,17 +165,28 @@
     color: #007acc;
   }
   .modal-content label {
-    margin-top: 6px;
-    margin-bottom: 4px;
+    margin-top: 10px;
+    margin-bottom: 6px;
     font-weight: 600;
     display: block;
   }
   .modal-content input {
-    margin-top: 6px;
     padding: 8px 12px;
     font-size: 16px;
     border-radius: 6px;
     border: 1px solid #ccc;
+    width: 100%;
+  }
+  .forgot-password {
+    margin-top: 6px;
+    text-align: right;
+    font-size: 14px;
+  }
+  .forgot-password a {
+    color: #007acc;
+  }
+  .forgot-password a:hover {
+    text-decoration: underline;
   }
   .modal-buttons {
     margin-top: 20px;
@@ -346,24 +214,7 @@
     background: #aaa;
   }
 
-  /* Стили для ссылки "Забыли пароль?" */
-  #forgot-password {
-    font-size: 14px;
-    line-height: 1;
-    margin-top: 4px;
-    display: inline-block;
-    cursor: pointer;
-    color: #007acc;
-  }
-  #forgot-password:hover {
-    text-decoration: underline;
-  }
 </style>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
 </head>
 <body>
 
@@ -372,9 +223,11 @@
     <img src="images/spellbook.png" alt="Логотип" class="logo" />
     <div>paste-min</div>
   </div>
+
   <nav>
     <button id="btn-create">Создать</button>
   </nav>
+
   <div class="account" id="account">
     <div class="account-name" id="account-name">Войти</div>
     <div class="account-dropdown" id="account-dropdown">
@@ -388,64 +241,10 @@
 </header>
 
 <main>
-  <!-- Главная страница -->
   <section id="main-page">
     <h2>Добро пожаловать!</h2>
     <p>На этом сайте вы можете создавать публикации и делиться ими.</p>
     <p>Все публикации сохраняются и доступны вам.</p>
-  </section>
-
-  <!-- Форма создания -->
-  <section id="form-section" class="hidden">
-    <h2 class="form-title">Создать</h2>
-    <form id="paste-form">
-      <div class="top-form-row">
-        <div class="form-group" style="flex: 3;">
-          <label for="title-input">Заголовок</label>
-          <input type="text" id="title-input" name="title" placeholder="Введите заголовок" required />
-        </div>
-        <div class="form-group" style="flex: 1;">
-          <label for="language-select">Язык разметки</label>
-          <select id="language-select" name="language" required>
-            <option value="plaintext">Plain Text</option>
-            <option value="markdown">Markdown</option>
-            <option value="yaml">YAML</option>
-            <option value="json">JSON</option>
-          </select>
-        </div>
-        <div class="form-group" style="flex: 1;">
-          <label for="expiry">Срок действия</label>
-          <select id="expiry" name="expiry">
-            <option value="1_week">1 неделя</option>
-            <option value="1_month">1 месяц</option>
-            <option value="1_year">1 год</option>
-            <option value="never">Никогда</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="text-preview-row">
-        <div>
-          <label for="content-input">Текст</label>
-          <textarea id="content-input" name="content" placeholder="Введите текст" oninput="updatePreview()" required></textarea>
-        </div>
-        <div>
-          <label for="preview">Просмотр</label>
-          <textarea id="preview" readonly></textarea>
-        </div>
-      </div>
-
-      <div class="form-button">
-        <button type="submit">Создать</button>
-      </div>
-    </form>
-  </section>
-
-  <!-- Текст в 3 колонки -->
-  <section class="info-text">
-    <div>Создавайте публикации легко и быстро.</div>
-    <div>Делитесь ссылками на ваши публикации с друзьями.</div>
-    <div>Все данные сохраняются для вашего удобства.</div>
   </section>
 </main>
 
@@ -457,10 +256,12 @@
       <label for="email-input">Email</label>
       <input type="email" id="email-input" required placeholder="Введите email" />
 
-      <label for="password-input" style="margin-top: 10px;">Пароль</label>
+      <label for="password-input">Пароль</label>
       <input type="password" id="password-input" required placeholder="Введите пароль" />
 
-      <a href="#" id="forgot-password">Забыли пароль?</a>
+      <div class="forgot-password">
+        <a href="#" id="forgot-password">Забыли пароль?</a>
+      </div>
 
       <div class="modal-buttons">
         <button type="submit">Войти</button>
@@ -470,8 +271,11 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
 <script>
-  // Конфигурация Firebase (вставь свою из консоли Firebase)
+  // Firebase конфигурация — замени на свои данные из Firebase Console
   const firebaseConfig = {
     apiKey: "AIzaSyBVRVBhAkr6hB5ayM_-ti6hXUbCkE5Xays",
     authDomain: "paste-registr-min.firebaseapp.com",
@@ -493,22 +297,19 @@
   const loginForm = document.getElementById('login-form');
   const loginCancel = document.getElementById('login-cancel');
 
-  // Обновление UI аккаунта
+  // Обновление UI при авторизации
   function updateAccountUI(user) {
     if (user) {
       accountName.textContent = user.email;
       logoutBtn.style.display = 'block';
-      accountDropdown.classList.remove('active');
-      loginModal.classList.add('hidden');
     } else {
       accountName.textContent = 'Войти';
       logoutBtn.style.display = 'none';
       accountDropdown.classList.remove('active');
-      loginModal.classList.add('hidden');
     }
   }
 
-  // Слушатель состояния аутентификации
+  // Слушатель состояния авторизации
   auth.onAuthStateChanged(user => {
     updateAccountUI(user);
   });
@@ -522,83 +323,31 @@
     }
   });
 
-  // Кнопка выхода
-  logoutBtn.addEventListener('click', () => {
-    auth.signOut();
-  });
-
-  // Отмена входа
+  // Закрыть модальное окно
   loginCancel.addEventListener('click', () => {
     loginModal.classList.add('hidden');
   });
 
-  // Обработка формы входа (логин или регистрация)
+  // Выход из аккаунта
+  logoutBtn.addEventListener('click', () => {
+    auth.signOut();
+    accountDropdown.classList.remove('active');
+  });
+
+  // Обработка формы входа
   loginForm.addEventListener('submit', e => {
     e.preventDefault();
     const email = loginForm['email-input'].value.trim();
     const password = loginForm['password-input'].value.trim();
-
-    if (!email || !password) {
-      alert('Пожалуйста, заполните email и пароль');
-      return;
-    }
-
-    // Попытка входа
     auth.signInWithEmailAndPassword(email, password)
       .then(() => {
-        loginForm.reset();
         loginModal.classList.add('hidden');
+        loginForm.reset();
       })
       .catch(error => {
-        if (error.code === 'auth/user-not-found') {
-          // Если пользователя нет, регистрируем
-          auth.createUserWithEmailAndPassword(email, password)
-            .then(() => {
-              loginForm.reset();
-              loginModal.classList.add('hidden');
-              alert('Регистрация прошла успешно, вы вошли в систему');
-            })
-            .catch(err => alert('Ошибка регистрации: ' + err.message));
-        } else if (error.code === 'auth/wrong-password') {
-          alert('Неверный пароль');
-        } else {
-          alert('Ошибка входа: ' + error.message);
-        }
+        alert('Ошибка входа: ' + error.message);
       });
   });
-
-  // Обработчик "Забыли пароль"
-  document.getElementById('forgot-password').addEventListener('click', (e) => {
-    e.preventDefault();
-    const email = prompt('Введите ваш email для восстановления пароля:');
-    if (email) {
-      auth.sendPasswordResetEmail(email)
-        .then(() => alert('Письмо для восстановления пароля отправлено на ' + email))
-        .catch(err => alert('Ошибка отправки письма: ' + err.message));
-    }
-  });
-
-  // Логика формы "Создать" — пока пусто
-  const btnCreate = document.getElementById('btn-create');
-  const mainPage = document.getElementById('main-page');
-  const formSection = document.getElementById('form-section');
-
-  btnCreate.addEventListener('click', () => {
-    if (!auth.currentUser) {
-      alert('Пожалуйста, войдите в аккаунт чтобы создавать публикации.');
-      loginModal.classList.remove('hidden');
-      return;
-    }
-    mainPage.classList.add('hidden');
-    formSection.classList.remove('hidden');
-  });
-
-  // Превью текста (пока простое копирование)
-  const contentInput = document.getElementById('content-input');
-  const preview = document.getElementById('preview');
-  function updatePreview() {
-    preview.value = contentInput.value;
-  }
 </script>
 
 </body>
