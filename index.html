@@ -9,6 +9,9 @@
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f4f6f8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     header {
       background: #007acc;
@@ -17,6 +20,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-shrink: 0;
     }
     .logo {
       font-size: 22px;
@@ -35,8 +39,8 @@
     main {
       max-width: 700px;
       height: 50px;             /* тонкое длинное поле */
-      margin: 20px auto 40px;   /* отступы сверху и снизу */
-      padding: 0 20px;          /* внутренние отступы слева и справа */
+      margin: 20px auto;
+      padding: 0 20px;
       background: white;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.05);
@@ -44,12 +48,23 @@
       display: flex;            /* flex для центрирования */
       justify-content: center;  /* горизонтальное центрирование */
       align-items: center;      /* вертикальное центрирование */
+      flex-shrink: 0;
     }
     h1 {
       margin: 0;
       color: #007acc;
       font-weight: 600;
       font-size: 20px;
+    }
+    footer {
+      margin-top: auto;
+      padding: 12px 20px;
+      background: #f4f6f8;
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      flex-shrink: 0;
+      user-select: none;
     }
     .form-section {
       padding: 20px;
@@ -104,6 +119,10 @@
     <h1>Добро пожаловать!</h1>
   </main>
 
+  <footer>
+    Создано с использованием GitHub Pages и Firebase 2025
+  </footer>
+
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
@@ -119,8 +138,7 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // Тут будет твоя логика для показа форм, авторизации и т.д.
-    // Пока что просто заглушка для показа этого блока
+    // Пока без логики, позже добавим формы и аутентификацию
   </script>
 </body>
 </html>
