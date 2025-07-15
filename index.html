@@ -107,16 +107,6 @@
       font-size: 16px;
       cursor: pointer;
     }
-    .auth-buttons button {
-      margin: 10px;
-      padding: 10px 20px;
-      background: #007acc;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
@@ -136,20 +126,31 @@
   <main>
     <div id="welcomeBox" class="main-box">
       <h1>Добро пожаловать!</h1>
-      <div class="auth-buttons">
-        <button onclick="window.location.href='login.html'">Войти</button>
-        <button onclick="window.location.href='register.html'">Регистрация</button>
-      </div>
     </div>
 
     <div id="editorBox" class="main-box hidden">
       <h2>Добавить материал</h2>
-      <div class="tabs">
+      <div>
+        <label for="syntax">Язык разметки:</label>
+        <select id="syntax">
+          <option value="markdown">Markdown</option>
+          <option value="html">HTML</option>
+          <option value="plain">Текст</option>
+        </select>
+        <label for="expiration" style="margin-left: 20px;">Срок действия:</label>
+        <select id="expiration">
+          <option value="1d">1 день</option>
+          <option value="7d">7 дней</option>
+          <option value="30d">30 дней</option>
+          <option value="forever">Навсегда</option>
+        </select>
+      </div>
+      <div class="tabs" style="margin-top: 15px;">
         <button id="tab-text" class="active" onclick="showTab('text')">Текст</button>
         <button id="tab-preview" onclick="showTab('preview')">Просмотр</button>
       </div>
       <div id="text-tab" class="tab-content">
-        <textarea id="markdownInput" placeholder="Введите текст с разметкой Markdown..."></textarea>
+        <textarea id="markdownInput" placeholder="Введите текст с разметкой..."></textarea>
       </div>
       <div id="preview-tab" class="tab-content hidden"></div>
       <button class="btn-publish" onclick="publish()">Опубликовать</button>
