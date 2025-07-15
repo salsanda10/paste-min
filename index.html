@@ -5,23 +5,43 @@
   <title>Главная — Публикации</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
+  <!-- Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
   <style>
+    /* Сохраняем фон и шрифты из твоего шаблона */
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: white;
+      background: #f0f0f0; /* твой красивый фон */
       color: #333;
     }
 
+    /* Рамка Добро пожаловать */
+    .welcome-box {
+      max-width: 400px;
+      margin: 150px auto;
+      padding: 20px 30px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: white;
+      font-size: 28px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    /* Шапка */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background-color: #f8f8f8;
       padding: 10px 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .logo {
@@ -48,6 +68,7 @@
       box-shadow: 0 8px 16px rgba(0,0,0,0.2);
       min-width: 180px;
       z-index: 10;
+      border-radius: 4px;
     }
 
     .account-dropdown:hover .dropdown-content {
@@ -65,33 +86,67 @@
       background-color: #f0f0f0;
     }
 
-    .welcome-box {
-      max-width: 400px;
-      margin: 100px auto 20px auto;
-      padding: 20px 30px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background: white;
-      font-size: 28px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-    }
-
+    /* Основной контейнер */
     main {
       max-width: 800px;
-      margin: 20px auto 50px auto;
+      margin: 40px auto 50px auto;
       padding: 20px;
-      text-align: center;
     }
 
-    button.add-material-btn {
-      padding: 12px 25px;
-      font-size: 18px;
-      background: #4caf50;
+    /* Вкладки */
+    .tabs button {
+      padding: 10px 20px;
+      cursor: pointer;
+      border: none;
+      background: #e0e0e0;
+      margin-right: 5px;
+      font-size: 16px;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .tabs .active {
+      background: #ccc;
+      font-weight: bold;
+    }
+
+    .tab-content {
+      border: 1px solid #ccc;
+      border-top: none;
+      background: white;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 16px;
+      min-height: 250px;
+      overflow-y: auto;
+      border-radius: 0 4px 4px 4px;
+    }
+
+    /* Скрытые вкладки */
+    .hidden {
+      display: none;
+    }
+
+    textarea {
+      width: 100%;
+      height: 250px;
+      font-family: monospace;
+      font-size: 16px;
+      padding: 10px;
+      border: none;
+      outline: none;
+      resize: vertical;
+    }
+
+    /* Кнопка Опубликовать */
+    button.publish-btn {
+      margin-top: 15px;
+      padding: 10px 25px;
+      background-color: #4caf50;
       color: white;
       border: none;
-      border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
+      border-radius: 5px;
     }
 
     footer {
@@ -105,7 +160,12 @@
 </head>
 <body>
 
-  <!-- Шапка -->
+  <!-- Приветствие -->
+  <div id="welcomeBox" class="welcome-box">
+    Добро пожаловать!
+  </div>
+
+  <!-- Шапка + Аккаунт (скрыта пока не авторизован) -->
   <header id="header" style="display:none;">
     <img src="images/logo.png" alt="Логотип" class="logo" />
     <div class="account-dropdown">
@@ -119,17 +179,25 @@
     </div>
   </header>
 
-  <!-- Добро пожаловать -->
-  <div id="welcomeBox" class="welcome-box" style="display:none;">
-    Добро пожаловать!
-  </div>
+  <!-- Основной контент (форма публикации) -->
+  <main id="editorMain" style="display:none;">
+    <div class="tabs">
+      <button id="tab-text" class="active" onclick="showTab('text')">Текст</button>
+      <button id="tab-preview" onclick="showTab('preview')">Просмотр</button>
+    </div>
 
-  <!-- Кнопка Добавить материал -->
-  <main id="addMaterialMain" style="display:none;">
-    <button class="add-material-btn" onclick="addMaterial()">Добавить материал</button>
+    <div id="text-tab" class="tab-content">
+      <textarea id="markdownInput" placeholder="Введите текст..."></textarea>
+    </div>
+
+    <div id="preview-tab" class="tab-content hidden"></div>
+
+    <button class="publish-btn" onclick="publish()">Опубликовать</button>
   </main>
 
-  <footer>Создано с использованием GitHub Pages и Firebase 2025</footer>
+  <footer>
+    Создано с использованием GitHub Pages и Firebase 2025
+  </footer>
 
   <script>
     const firebaseConfig = {
@@ -144,15 +212,18 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
+    // Отслеживаем состояние пользователя
     auth.onAuthStateChanged(user => {
       if (user) {
-        document.getElementById('header').style.display = 'flex';
+        // Пользователь авторизован — показываем форму и меню
         document.getElementById('welcomeBox').style.display = 'none';
-        document.getElementById('addMaterialMain').style.display = 'block';
+        document.getElementById('header').style.display = 'flex';
+        document.getElementById('editorMain').style.display = 'block';
       } else {
-        document.getElementById('header').style.display = 'none';
+        // Пользователь не авторизован — показываем приветствие
         document.getElementById('welcomeBox').style.display = 'block';
-        document.getElementById('addMaterialMain').style.display = 'none';
+        document.getElementById('header').style.display = 'none';
+        document.getElementById('editorMain').style.display = 'none';
       }
     });
 
@@ -165,14 +236,39 @@
       if (user) {
         auth.sendPasswordResetEmail(user.email)
           .then(() => alert('Письмо для сброса пароля отправлено на ' + user.email))
-          .catch(err => alert('Ошибка: ' + err.message));
+          .catch(e => alert('Ошибка: ' + e.message));
       } else {
         alert('Пользователь не найден');
       }
     }
 
-    function addMaterial() {
-      alert('Здесь можно добавить материал (пока заглушка)');
+    function showTab(tab) {
+      const textTab = document.getElementById('text-tab');
+      const previewTab = document.getElementById('preview-tab');
+      const tabTextBtn = document.getElementById('tab-text');
+      const tabPreviewBtn = document.getElementById('tab-preview');
+
+      if (tab === 'text') {
+        textTab.classList.remove('hidden');
+        previewTab.classList.add('hidden');
+        tabTextBtn.classList.add('active');
+        tabPreviewBtn.classList.remove('active');
+      } else {
+        // Отображаем markdown в режиме предпросмотра
+        const markdown = document.getElementById('markdownInput').value;
+        previewTab.innerHTML = marked.parse(markdown);
+
+        previewTab.classList.remove('hidden');
+        textTab.classList.add('hidden');
+        tabPreviewBtn.classList.add('active');
+        tabTextBtn.classList.remove('active');
+      }
+    }
+
+    function publish() {
+      const content = document.getElementById('markdownInput').value;
+      alert("Публикация:\n\n" + content);
+      // Тут можно добавить отправку в Firestore
     }
   </script>
 
