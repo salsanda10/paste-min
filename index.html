@@ -12,6 +12,9 @@
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f4f6f8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     header {
       background: #007acc;
@@ -107,6 +110,13 @@
       font-size: 16px;
       cursor: pointer;
     }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #f0f0f0;
+      font-size: 14px;
+      margin-top: auto;
+    }
   </style>
 </head>
 <body>
@@ -115,9 +125,9 @@
     <div class="account-dropdown" id="accountMenu" style="display: none;">
       <button class="account-btn">Аккаунт ⌄</button>
       <div class="dropdown-content">
-        <a href="#">Настройки</a>
-        <a href="#">Поменять пароль</a>
-        <a href="#">Обо мне</a>
+        <a href="#" onclick="alert('Настройки пока не реализованы')">Настройки</a>
+        <a href="#" onclick="alert('Поменять пароль пока не реализовано')">Поменять пароль</a>
+        <a href="#" onclick="alert('Раздел Обо мне пока не реализован')">Обо мне</a>
         <a href="#" onclick="logout()">Выход</a>
       </div>
     </div>
@@ -134,8 +144,8 @@
         <label for="syntax">Язык разметки:</label>
         <select id="syntax">
           <option value="markdown">Markdown</option>
-          <option value="html">HTML</option>
-          <option value="plain">Текст</option>
+          <option value="plaintext">PlainText</option>
+          <option value="yaml">YAML</option>
         </select>
         <label for="expiration" style="margin-left: 20px;">Срок действия:</label>
         <select id="expiration">
@@ -157,6 +167,10 @@
     </div>
   </main>
 
+  <footer>
+    Создано с использованием GitHub Pages и Firebase 2025
+  </footer>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBVRVBhAkr6hB5ayM_-ti6hXUbCkE5Xays",
@@ -170,7 +184,7 @@
     const auth = firebase.auth();
 
     function logout() {
-      auth.signOut();
+      auth.signOut().then(() => location.reload());
     }
 
     auth.onAuthStateChanged(user => {
