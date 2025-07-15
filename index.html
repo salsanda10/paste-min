@@ -6,6 +6,7 @@
   <title>paste-min</title>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     body {
@@ -46,7 +47,7 @@
       right: 0;
       background: white;
       box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-      min-width: 180px;
+      min-width: 200px;
       border-radius: 6px;
       z-index: 10;
     }
@@ -117,6 +118,17 @@
       font-size: 14px;
       margin-top: auto;
     }
+    .settings-box input, .settings-box textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .settings-box button {
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -125,9 +137,9 @@
     <div class="account-dropdown" id="accountMenu" style="display: none;">
       <button class="account-btn">Аккаунт ⌄</button>
       <div class="dropdown-content">
-        <a href="#" onclick="alert('Настройки пока не реализованы')">Настройки</a>
-        <a href="#" onclick="alert('Поменять пароль пока не реализовано')">Поменять пароль</a>
-        <a href="#" onclick="alert('Раздел Обо мне пока не реализован')">Обо мне</a>
+        <a href="#" onclick="showSettings()">Настройки</a>
+        <a href="#" onclick="showPasswordReset()">Поменять пароль</a>
+        <a href="#" onclick="showAbout()">Обо мне</a>
         <a href="#" onclick="logout()">Выход</a>
       </div>
     </div>
@@ -141,18 +153,18 @@
     <div id="editorBox" class="main-box hidden">
       <h2>Добавить материал</h2>
       <div>
-        <label for="syntax">Язык разметки:</label>
-        <select id="syntax">
-          <option value="markdown">Markdown</option>
-          <option value="plaintext">PlainText</option>
-          <option value="yaml">YAML</option>
+        <label>Язык разметки:</label>
+        <select>
+          <option>Markdown</option>
+          <option>PlainText</option>
+          <option>YAML</option>
         </select>
-        <label for="expiration" style="margin-left: 20px;">Срок действия:</label>
-        <select id="expiration">
-          <option value="1d">1 день</option>
-          <option value="7d">7 дней</option>
-          <option value="30d">30 дней</option>
-          <option value="forever">Навсегда</option>
+        <label style="margin-left: 20px;">Срок действия:</label>
+        <select>
+          <option>1 день</option>
+          <option>7 дней</option>
+          <option>30 дней</option>
+          <option>Навсегда</option>
         </select>
       </div>
       <div class="tabs" style="margin-top: 15px;">
@@ -160,10 +172,27 @@
         <button id="tab-preview" onclick="showTab('preview')">Просмотр</button>
       </div>
       <div id="text-tab" class="tab-content">
-        <textarea id="markdownInput" placeholder="Введите текст с разметкой..."></textarea>
+        <textarea id="markdownInput"></textarea>
       </div>
       <div id="preview-tab" class="tab-content hidden"></div>
       <button class="btn-publish" onclick="publish()">Опубликовать</button>
+    </div>
+
+    <div id="settingsBox" class="main-box hidden settings-box">
+      <h2>Настройки</h2>
+      <p id="userEmail"></p>
+    </div>
+
+    <div id="passwordBox" class="main-box hidden settings-box">
+      <h2>Поменять пароль</h2>
+      <input type="password" id="newPassword" placeholder="Новый пароль">
+      <button onclick="changePassword()">Сменить</button>
+    </div>
+
+    <div id="aboutBox" class="main-box hidden settings-box">
+      <h2>Обо мне</h2>
+      <textarea id="aboutText" rows="6" placeholder="Напишите о себе..."></textarea>
+      <button onclick="saveAbout()">Сохранить</button>
     </div>
   </main>
 
@@ -182,51 +211,96 @@
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const welcomeBox = document.getElementById('welcomeBox');
+    const editorBox = document.getElementById('editorBox');
+    const accountMenu = document.getElementById('accountMenu');
+    const settingsBox = document.getElementById('settingsBox');
+    const passwordBox = document.getElementById('passwordBox');
+    const aboutBox = document.getElementById('aboutBox');
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        welcomeBox.classList.add('hidden');
+        editorBox.classList.remove('hidden');
+        accountMenu.style.display = 'block';
+        document.getElementById('userEmail').textContent = `Вы вошли как: ${user.email}`;
+        loadAbout();
+      } else {
+        welcomeBox.classList.remove('hidden');
+        editorBox.classList.add('hidden');
+        accountMenu.style.display = 'none';
+        settingsBox.classList.add('hidden');
+        passwordBox.classList.add('hidden');
+        aboutBox.classList.add('hidden');
+      }
+    });
 
     function logout() {
       auth.signOut().then(() => location.reload());
     }
 
-    auth.onAuthStateChanged(user => {
-      const welcomeBox = document.getElementById('welcomeBox');
-      const editorBox = document.getElementById('editorBox');
-      const accountMenu = document.getElementById('accountMenu');
-
-      if (user) {
-        welcomeBox.classList.add('hidden');
-        editorBox.classList.remove('hidden');
-        accountMenu.style.display = 'block';
-      } else {
-        welcomeBox.classList.remove('hidden');
-        editorBox.classList.add('hidden');
-        accountMenu.style.display = 'none';
-      }
-    });
-
     function showTab(tab) {
-      const textTab = document.getElementById('text-tab');
-      const previewTab = document.getElementById('preview-tab');
       document.getElementById('tab-text').classList.remove('active');
       document.getElementById('tab-preview').classList.remove('active');
-
+      document.getElementById('text-tab').classList.add('hidden');
+      document.getElementById('preview-tab').classList.add('hidden');
       if (tab === 'text') {
-        textTab.classList.remove('hidden');
-        previewTab.classList.add('hidden');
         document.getElementById('tab-text').classList.add('active');
+        document.getElementById('text-tab').classList.remove('hidden');
       } else {
-        const content = document.getElementById('markdownInput').value;
-        previewTab.innerHTML = marked.parse(content);
-        previewTab.classList.remove('hidden');
-        textTab.classList.add('hidden');
         document.getElementById('tab-preview').classList.add('active');
+        document.getElementById('preview-tab').classList.remove('hidden');
+        document.getElementById('preview-tab').innerHTML = marked.parse(document.getElementById('markdownInput').value);
       }
     }
 
     function publish() {
-      const content = document.getElementById('markdownInput').value;
-      const id = Math.random().toString(36).substring(2, 10);
-      const url = window.location.origin + '/view/' + id;
-      alert('Ваша ссылка: ' + url);
+      alert("Публикация создана (заглушка)");
+    }
+
+    function showSettings() {
+      settingsBox.classList.remove('hidden');
+      passwordBox.classList.add('hidden');
+      aboutBox.classList.add('hidden');
+    }
+
+    function showPasswordReset() {
+      settingsBox.classList.add('hidden');
+      passwordBox.classList.remove('hidden');
+      aboutBox.classList.add('hidden');
+    }
+
+    function showAbout() {
+      settingsBox.classList.add('hidden');
+      passwordBox.classList.add('hidden');
+      aboutBox.classList.remove('hidden');
+    }
+
+    function changePassword() {
+      const newPassword = document.getElementById('newPassword').value;
+      const user = auth.currentUser;
+      user.updatePassword(newPassword)
+        .then(() => alert("Пароль обновлён!"))
+        .catch(error => alert("Ошибка: " + error.message));
+    }
+
+    function saveAbout() {
+      const text = document.getElementById('aboutText').value;
+      const user = auth.currentUser;
+      db.collection("users").doc(user.uid).set({ about: text })
+        .then(() => alert("Сохранено"))
+        .catch(err => alert("Ошибка сохранения"));
+    }
+
+    function loadAbout() {
+      const user = auth.currentUser;
+      db.collection("users").doc(user.uid).get().then(doc => {
+        if (doc.exists) {
+          document.getElementById('aboutText').value = doc.data().about || "";
+        }
+      });
     }
   </script>
 </body>
